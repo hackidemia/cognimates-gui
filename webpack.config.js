@@ -30,13 +30,21 @@ const base = {
         ReactDOM: 'react-dom'
     },
     resolve: {
-        symlinks: false
+        symlinks: false,
+        alias: {
+            'scratch-vm': path.resolve(__dirname, '../cognimates-vm')
+        }
     },
     module: {
         rules: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            include: [path.resolve(__dirname, 'src'), /node_modules[\\/]scratch-[^\\/]+[\\/]src/, /node_modules[\\/]cognimates-l10n[\\/]src/],
+            include: [
+                path.resolve(__dirname, 'src'), 
+                /node_modules[\\/]cognimates-l10n[\\/]src/,
+                /node_modules[\\/]scratch-paint[\\/]src/,
+                /node_modules[\\/]scratch-blocks[\\/]/
+            ],
             options: {
                 // Explicitly disable babelrc so we don't catch various config
                 // in much lower dependencies.
@@ -176,7 +184,7 @@ module.exports = [
             }]),
             new CopyWebpackPlugin([{
                 from: 'extension-worker.{js,js.map}',
-                context: 'node_modules/scratch-vm/dist/web'
+                context: '../cognimates-vm/dist/web'
             }])
         ])
     })
@@ -216,7 +224,7 @@ module.exports = [
                 }]),
                 new CopyWebpackPlugin([{
                     from: 'extension-worker.{js,js.map}',
-                    context: 'node_modules/scratch-vm/dist/web'
+                    context: '../cognimates-vm/dist/web'
                 }])
             ])
         })) : []
