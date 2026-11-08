@@ -64,6 +64,7 @@ class Blocks extends React.Component {
             'onScriptGlowOff',
             'onBlockGlowOn',
             'onBlockGlowOff',
+            'onFocusBlock',
             'handleExtensionAdded',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
@@ -240,6 +241,7 @@ class Blocks extends React.Component {
         this.props.vm.addListener('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
         this.props.vm.addListener('BLOCK_GLOW_ON', this.onBlockGlowOn);
         this.props.vm.addListener('BLOCK_GLOW_OFF', this.onBlockGlowOff);
+        this.props.vm.addListener('COGNIMATES_FOCUS_BLOCK', this.onFocusBlock);
         this.props.vm.addListener('VISUAL_REPORT', this.onVisualReport);
         this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
@@ -253,6 +255,7 @@ class Blocks extends React.Component {
         this.props.vm.removeListener('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
         this.props.vm.removeListener('BLOCK_GLOW_ON', this.onBlockGlowOn);
         this.props.vm.removeListener('BLOCK_GLOW_OFF', this.onBlockGlowOff);
+        this.props.vm.removeListener('COGNIMATES_FOCUS_BLOCK', this.onFocusBlock);
         this.props.vm.removeListener('VISUAL_REPORT', this.onVisualReport);
         this.props.vm.removeListener('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.removeListener('targetsUpdate', this.onTargetsUpdate);
@@ -295,17 +298,25 @@ class Blocks extends React.Component {
             this.setState({workspaceMetrics});
         }
     }
+    // Glow requests can also come from the assistant's "show me" highlights;
+    // ignore ids that are not on the current workspace instead of throwing.
     onScriptGlowOn (data) {
-        this.workspace.glowStack(data.id, true);
+        if (this.workspace.getBlockById(data.id)) this.workspace.glowStack(data.id, true);
     }
     onScriptGlowOff (data) {
-        this.workspace.glowStack(data.id, false);
+        if (this.workspace.getBlockById(data.id)) this.workspace.glowStack(data.id, false);
     }
     onBlockGlowOn (data) {
-        this.workspace.glowBlock(data.id, true);
+        if (this.workspace.getBlockById(data.id)) this.workspace.glowBlock(data.id, true);
     }
     onBlockGlowOff (data) {
-        this.workspace.glowBlock(data.id, false);
+        if (this.workspace.getBlockById(data.id)) this.workspace.glowBlock(data.id, false);
+    }
+    onFocusBlock (data) {
+        if (data && this.workspace.getBlockById(data.id) &&
+            typeof this.workspace.centerOnBlock === 'function') {
+            this.workspace.centerOnBlock(data.id);
+        }
     }
     onVisualReport (data) {
         this.workspace.reportValue(data.id, data.value);

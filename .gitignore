@@ -4,7 +4,8 @@
 # NPM
 /node_modules
 npm-*
-/package-lock.json
+# package-lock.json is committed so the editor build is reproducible
+# (resolved with `npm install --before=2025-04-22 --legacy-peer-deps`).
 
 # Testing
 /.nyc_output

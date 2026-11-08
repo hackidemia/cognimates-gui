@@ -143,7 +143,13 @@ module.exports = [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"'
+                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"',
+                // Cognimates assistant bridge: comma separated parent origins allowed to
+                // embed and talk to this editor (its own origin is always allowed).
+                'COGNIMATES_BRIDGE_PARENT_ORIGINS': JSON.stringify(
+                    process.env.COGNIMATES_BRIDGE_PARENT_ORIGINS ||
+                    (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001')),
+                'COGNIMATES_EDITOR_VERSION': JSON.stringify(process.env.COGNIMATES_EDITOR_VERSION || 'dev')
             }),
             new HtmlWebpackPlugin({
                 chunks: ['lib.min', 'gui'],
