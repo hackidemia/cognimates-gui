@@ -147,8 +147,11 @@ describe('Cognimates bridge adapter (real VM)', () => {
                 vm.clear();
                 throw new Error('Failed replacement');
             })
-            .mockImplementationOnce(async () => { throw new Error('Failed rollback'); });
-        await expectBridgeError(adapter.loadProject({data: input.data, replaceUnsaved: true,
+            .mockImplementationOnce(async () => {
+                throw new Error('Failed rollback');
+            });
+        await expectBridgeError(adapter.loadProject({data: input.data,
+            replaceUnsaved: true,
             baseRevision: adapter.getRevision()}), ERROR_CODES.RECOVERY_FAILED);
         const backup = await adapter.exportProject({recovery: true});
         expect(backup.recovery).toBe(true);
